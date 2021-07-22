@@ -1,0 +1,35 @@
+- hosts: localhost
+  vars:
+    resource_grp: "myaksresource"
+    location: "eastus"
+    k8s_version: "1.21.1"
+    dns_pre: "akstest"
+    username: "azureuser"
+  vars_files:
+  - secret.yaml
+  tasks:
+  - name: Creating resource group
+    azure_rm_resourcegroup:
+      name: "{{ resource_grp }}"
+      location: "{{ location }}"
+
+  - name: Creating an AKS cluster
+    azure_rm_aks:
+      name: myAKS
+      resource_group: "{{ resource_grp }}"
+      location: "{{ location }}"
+      kubernetes_version: "{{ k8s_version }}"
+      dns_prefix: "{{ dns_pre }}"
+      linux_profile:
+        admin_username: "{{ username }}"
+        ssh_key: "{{ ssh_key }}"
+      service_principal:
+        client_id: "{{ client_id }}"
+        client_secret: "{{ client_secret }}"
+      agent_pool_profiles:
+        - name: default
+          count: 2
+          vm_size: Standard_D2_v2
+      tags:
+         Environment: Dev
+                                                                                                                                           34,18         Bot
